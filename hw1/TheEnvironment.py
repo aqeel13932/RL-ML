@@ -47,10 +47,13 @@ def CheckReward(s):
             else:
                 reward=0
     #Return reward
+    return reward
+    '''
     if reward==None:
         return reward
     else:
         return pow(s.BaseGamma,s.Playerdraws)*reward
+    '''
 
 def step(s,a):
     '''
