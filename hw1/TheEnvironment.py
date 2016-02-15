@@ -87,6 +87,8 @@ while not Easy21.terminated:
     else:
         action=GetPlayerAction()
 
+print '---Game Ended---'
+
 
 
 
