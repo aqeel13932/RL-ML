@@ -26,28 +26,31 @@ def CheckReward(s):
     :param s: Game State(type State)
     :return:signed integer as reward(-1,0,1))
     '''
-    reward=0
+    reward=None
     #The Game Ended Already(Someone Got Busted)
     if s.terminated:
         #The Player busted
         if s.PlayerBust:
             reward=-1
         #The Dealer busted
-        else:
+        elif s.DealerBust:
             reward=1
-    #No one Got Busted
+         #No one Got Busted
+        else:
+            #Player score is higher than the dealer
+            if s.playersum>s.dealersum:
+                reward=1
+            #Dealer Score is higher than the player
+            elif s.dealersum>s.playersum:
+                reward=-1
+            #Dealer and Player scores equal
+            else:
+                reward=0
+    #Return reward
+    if reward==None:
+        return reward
     else:
-        #Player score is higher than the dealer
-        if s.playersum>s.dealersum:
-            reward=1
-        #Dealer Score is higher than the player
-        elif s.dealersum>s.playersum:
-            reward=-1
-        #Dealer and Player scores equal
-        else:
-            reward=0
-    #Return
-    return pow(s.BaseGamma,s.Playerdraws)*reward
+        return pow(s.BaseGamma,s.Playerdraws)*reward
 
 def step(s,a):
     '''
@@ -68,6 +71,8 @@ def step(s,a):
         #if game not terminated & the dealer sum is less than 17
         while not s.terminated and s.dealersum<17:
             s.AddDrawnCardDealer(DrawCard())
+        #Either the dealer got busted or got more than 17
+        s.terminated=True
         return CheckReward(s)
 
 def GetPlayerAction():
@@ -81,7 +86,9 @@ print '---Inititation values ----'
 print Easy21
 action = GetPlayerAction()
 while not Easy21.terminated:
-    print 'reward:{:2d}'.format(step(Easy21,action)) , Easy21
+    print 'reward:{:4s}'.format(str(step(Easy21,action))) , Easy21
+    if Easy21.terminated:
+        break
     if action==1:
         break
     else:
